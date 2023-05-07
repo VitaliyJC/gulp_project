@@ -85,7 +85,24 @@ function watching() {
   browserSync.init({
     server: {
       baseDir: 'app/',
+      host: '192.168.1.148',
     },
+    callbacks: {
+      ready: function (err, bs) {
+        bs.addMiddleware('*', function (req, res) {
+          res.writeHead(302, {
+            location: '404.html',
+          });
+          res.end('Redirecting!');
+        });
+      },
+    },
+    browser: 'default',
+    logPrefix: 'Browser-info:',
+    logLevel: 'info',
+    logConnections: true,
+    logFileChanges: true,
+    open: true,
   });
   watch(['app/scss/style.scss'], styles);
   watch(['app/images/src'], images);
