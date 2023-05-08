@@ -1,7 +1,4 @@
-.main {
-  padding: 0;
-
-  .inner {
-    margin: 0;
-  }
-}
+@import 'components/_normalize.scss';
+@import 'components/_header.scss';
+@import 'components/_main.scss';
+@import 'components/_footer.scss';

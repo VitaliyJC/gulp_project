@@ -7,6 +7,7 @@ const uglify = require('gulp-uglify-es').default;
 const browserSync = require('browser-sync').create();
 const autoprefixer = require('gulp-autoprefixer');
 const clean = require('gulp-clean');
+const cleanCss = require('gulp-clean-css');
 const avif = require('gulp-avif');
 const webp = require('gulp-webp');
 const imagemin = require('gulp-imagemin');
@@ -15,6 +16,7 @@ const fonter = require('gulp-fonter');
 const ttf2woff2 = require('gulp-ttf2woff2');
 const svgSprite = require('gulp-svg-sprite');
 const include = require('gulp-include');
+const plumber = require('gulp-plumber');
 
 function pages() {
   return src('app/pages/*.html')
@@ -37,14 +39,17 @@ function fonts() {
 
 function images() {
   return src(['app/images/src/*.*', '!app/images/src/*.svg'])
+    .pipe(plumber())
     .pipe(newer('app/images'))
     .pipe(avif({quality: 50}))
 
     .pipe(src('app/images/src/*.*'))
+    .pipe(plumber())
     .pipe(newer('app/images'))
     .pipe(webp())
 
     .pipe(src('app/images/src/*.*'))
+    .pipe(plumber())
     .pipe(newer('app/images'))
     .pipe(imagemin())
 
@@ -75,6 +80,7 @@ function scripts() {
 function styles() {
   return src('app/scss/style.scss')
     .pipe(autoprefixer({overrideBrowserslist: ['last 10 version']}))
+    .pipe(cleanCss())
     .pipe(concat('style.min.css'))
     .pipe(scss({outputStyle: 'compressed'}))
     .pipe(dest('app/css'))
@@ -104,7 +110,7 @@ function watching() {
     logFileChanges: true,
     open: true,
   });
-  watch(['app/scss/style.scss'], styles);
+  watch(['app/scss/**/*.scss'], styles);
   watch(['app/images/src'], images);
   watch(['app/js/main.js'], scripts);
   watch(['app/components/*', 'app/pages/*'], pages);
